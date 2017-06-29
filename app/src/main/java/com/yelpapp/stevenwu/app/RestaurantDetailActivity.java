@@ -12,6 +12,9 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.yelpapp.stevenwu.app.models.Business;
+import com.yelpapp.stevenwu.app.service.YelpStorage;
+
 /**
  * An activity representing a single Restaurant detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,
@@ -19,6 +22,7 @@ import android.widget.Toast;
  * in a {@link RestaurantMapActivity}.
  */
 public class RestaurantDetailActivity extends AppCompatActivity {
+    private Business mBusinese;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +35,14 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(),"will Call number",Toast.LENGTH_SHORT);
+                if (mBusinese != null) {
+
+                        Toast.makeText(view.getContext(),
+                                "Will call number" + mBusinese.phone,
+                                Toast.LENGTH_SHORT).show();
+
+                }
+
             }
         });
 
@@ -46,8 +57,9 @@ public class RestaurantDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(RestaurantDetailFragment.ARG_ID,
-                    getIntent().getStringExtra(RestaurantDetailFragment.ARG_ID));
+            String id = getIntent().getStringExtra(RestaurantDetailFragment.ARG_ID);
+            mBusinese = YelpStorage.getBussinesById(id);
+            arguments.putString(RestaurantDetailFragment.ARG_ID, id);
             RestaurantDetailFragment fragment = new RestaurantDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -60,14 +72,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            NavUtils.navigateUpTo(this, new Intent(this, RestaurantMapActivity.class));
+            //finishActivity();
+            this.finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

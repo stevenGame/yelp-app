@@ -22,7 +22,6 @@ import com.yelpapp.stevenwu.app.service.YelpFactory;
 import com.yelpapp.stevenwu.app.service.YelpStorage;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,15 +47,13 @@ public class RestaurantMapActivity extends AppCompatActivity implements
     private final LatLng startPoint = new LatLng(40.7625605, -73.818851); // New York
     private HashMap<String, Marker> mMarkers = new HashMap<>();
     private boolean inClick = false;
-    private boolean inResume = false;
-    private ProgressDialog mProgressDialog;
-    private LatLng mCurretLatLng;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        mProgressDialog = new ProgressDialog(this);
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -73,13 +70,12 @@ public class RestaurantMapActivity extends AppCompatActivity implements
         mMap.setInfoWindowAdapter(new ResturantInfoWindowAdapter(this));
         mMap.setOnInfoWindowClickListener(this);
         mMap.setOnCameraIdleListener(this);
+        getResturant(startPoint);
     }
 
     private void getResturant(LatLng latLng) {
         final Activity ctx = this;
-        if (!mProgressDialog.isShowing()) {
-           //  mProgressDialog.show();
-        }
+
 
         Call<SearchResponse> call = YelpFactory.searchResturant(latLng.latitude,
                 latLng.longitude);
@@ -95,7 +91,7 @@ public class RestaurantMapActivity extends AppCompatActivity implements
             @Override
             public void onFailure(Call<SearchResponse> call, Throwable t) {
                 Toast.makeText(ctx, "Some Error happen", Toast.LENGTH_SHORT).show();
-                mProgressDialog.hide();
+
             }
         });
     }
@@ -121,10 +117,7 @@ public class RestaurantMapActivity extends AppCompatActivity implements
 
     private void clearMakers() {
         if (!mMarkers.isEmpty()) {
-            for (Map.Entry<String, Marker> entry : mMarkers.entrySet()) {
-                entry.getValue().remove();
-
-            }
+            mMap.clear();
             mMarkers.clear();
         }
     }
@@ -138,29 +131,18 @@ public class RestaurantMapActivity extends AppCompatActivity implements
     @Override
     public void onCameraIdle() {
         // call this function when map bounds changed
-
-        if (!inClick && !inResume) {
+        if (!inClick) {
             getResturant(mMap.getCameraPosition().target);
         }
         inClick = false;
-        inResume = false;
     }
 
-    @Override
-    public void onRestart() {
-        super.onRestart();
-        inResume = true;
-        if (mCurretLatLng != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(mCurretLatLng));
-        }
 
-    }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
         Bundle arguments = new Bundle();
         arguments.putString(RestaurantDetailFragment.ARG_ID, marker.getTitle());
-        mCurretLatLng = mMap.getCameraPosition().target;
         Intent intent = new Intent(this, RestaurantDetailActivity.class);
         intent.putExtra(RestaurantDetailFragment.ARG_ID, marker.getTitle());
         this.startActivity(intent);

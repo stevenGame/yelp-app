@@ -6,7 +6,6 @@ import com.yelpapp.stevenwu.app.models.Business;
 import com.yelpapp.stevenwu.app.models.ReviewResponse;
 import com.yelpapp.stevenwu.app.models.SearchResponse;
 import com.yelpapp.stevenwu.app.service.YelpFactory;
-import com.yelpapp.stevenwu.app.service.YelpService;
 import com.yelpapp.stevenwu.app.service.YelpStorage;
 
 import org.junit.Assert;
