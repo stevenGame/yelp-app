@@ -72,7 +72,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            //finishActivity();
+
             this.finish();
             return true;
         }
